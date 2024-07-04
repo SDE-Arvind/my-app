@@ -11,8 +11,11 @@ const UserForm = () => {
     const fetchUsers = async () => {
       const db = await getDatabase();
       const usersCollection = db.users;
-      const usersData = await usersCollection.find().exec();
-      setUsers(usersData);
+      // get all users
+      await usersCollection.find()
+      .$ // the $ returns an observable that emits each time the result set of the query changes
+      .subscribe(usersData => setUsers(usersData));
+    //   setUsers(usersData);
     };
 
     fetchUsers();
