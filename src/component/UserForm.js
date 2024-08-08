@@ -1,25 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { getDatabase } from './rxdbConfig';
+import { getDatabase } from '../database/rxdbConfig';
 
 const UserForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const db = await getDatabase();
-      const usersCollection = db.users;
-      // get all users
-      await usersCollection.find()
-      .$ // the $ returns an observable that emits each time the result set of the query changes
-      .subscribe(usersData => setUsers(usersData));
-    //   setUsers(usersData);
-    };
-
-    fetchUsers();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,8 +18,7 @@ const UserForm = () => {
       lastName
     });
 
-    const usersData = await usersCollection.find().exec();
-    setUsers(usersData);
+    await usersCollection.find().exec();
 
     setFirstName('');
     setLastName('');
@@ -64,14 +48,6 @@ const UserForm = () => {
         </div>
         <button type="submit">Save</button>
       </form>
-      <h3>Users List</h3>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.firstName} {user.lastName}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };
